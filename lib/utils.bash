@@ -49,14 +49,12 @@ install_version() {
 	fi
 
 	(
-		mkdir -p "$install_path"
-		# cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
-    current_dir="$PWD"
 		cd "$ASDF_DOWNLOAD_PATH"/
-    env \
-      PREFIX="$install_path" \
-      WITH_BASHCOMP="no" WITH_ZSHCOMP="no" WITH_FISHCOMP="no" \
-      make install
+    mkdir -p "$install_path/lib/password-store/extensions"
+    mkdir -p "$install_path/bin"
+    sed '/PLATFORM_FUNCTION_FILE/d;s:^SYSTEM_EXTENSION_DIR=.*:SYSTEM_EXTENSION_DIR="'"$install_path/lib"'/password-store/extensions":' \
+      src/password-store.sh > "$install_path/bin/pass"
+    chmod 0755 "$install_path/bin/pass"
     
 
 		# Assert pass executable exists.
